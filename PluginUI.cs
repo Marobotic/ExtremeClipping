@@ -1,6 +1,6 @@
 ﻿using Dalamud.Bindings.ImGui;
 
-namespace NoClippy
+namespace ExtremeClipping
 {
     public static class PluginUI
     {

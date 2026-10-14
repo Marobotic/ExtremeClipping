@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using Dalamud.Bindings.ImGui;
 
-namespace NoClippy
+namespace ExtremeClipping
 {
     // The Marochy look (Dotrb palette, from Marochy-Ecosystem-Theme/tokens/tokens.json) applied to ImGui.
     // Surfaces are the bg mixed toward the fg; square corners; 1 px lines; one accent.

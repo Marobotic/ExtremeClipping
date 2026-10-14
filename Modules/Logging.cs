@@ -2,7 +2,7 @@ using System;
 using Dalamud.Game.Text;
 using Dalamud.Bindings.ImGui;
 
-namespace NoClippy
+namespace ExtremeClipping
 {
     public partial class Configuration
     {
@@ -12,7 +12,7 @@ namespace NoClippy
 }
 
 // This is a module because why not
-namespace NoClippy.Modules
+namespace ExtremeClipping.Modules
 {
     public class Logging : Module
     {
@@ -22,20 +22,20 @@ namespace NoClippy.Modules
         {
             Theme.Section("Logging");
 
-            if (ImGui.Checkbox("Output to chat log", ref NoClippy.Config.LogToChat))
-                NoClippy.Config.Save();
+            if (ImGui.Checkbox("Output to chat log", ref ExtremeClipping.Config.LogToChat))
+                ExtremeClipping.Config.Save();
             PluginUI.SetItemTooltip("Sends logging to the chat log instead.");
 
-            if (!NoClippy.Config.LogToChat) return;
+            if (!ExtremeClipping.Config.LogToChat) return;
 
-            if (ImGui.BeginCombo("Log chat type", NoClippy.Config.LogChatType.ToString()))
+            if (ImGui.BeginCombo("Log chat type", ExtremeClipping.Config.LogChatType.ToString()))
             {
                 foreach (var chatType in Enum.GetValues<XivChatType>())
                 {
                     if (!ImGui.Selectable(chatType.ToString())) continue;
 
-                    NoClippy.Config.LogChatType = chatType;
-                    NoClippy.Config.Save();
+                    ExtremeClipping.Config.LogChatType = chatType;
+                    ExtremeClipping.Config.Save();
                 }
 
                 ImGui.EndCombo();

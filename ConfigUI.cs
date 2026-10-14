@@ -6,7 +6,7 @@ using Dalamud.Interface.ImGuiNotification;
 using Dalamud.Interface.Utility;
 using Dalamud.Bindings.ImGui;
 
-namespace NoClippy
+namespace ExtremeClipping
 {
     public static class ConfigUI
     {

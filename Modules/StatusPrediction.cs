@@ -7,7 +7,7 @@ using Dalamud.Game.ClientState.Statuses;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using Dalamud.Bindings.ImGui;
 
-namespace NoClippy
+namespace ExtremeClipping
 {
     public partial class Configuration
     {
@@ -17,7 +17,7 @@ namespace NoClippy
     }
 }
 
-namespace NoClippy.Modules
+namespace ExtremeClipping.Modules
 {
     public class StatusPrediction : Module
     {
@@ -34,8 +34,8 @@ namespace NoClippy.Modules
 
         /*public override bool IsEnabled
         {
-            get => NoClippy.Config.PredictStatusApplications || NoClippy.Config.PredictMudras || NoClippy.Config.PredictDualcast;
-            set => NoClippy.Config.PredictStatusApplications = NoClippy.Config.PredictMudras = NoClippy.Config.PredictDualcast = value;
+            get => ExtremeClipping.Config.PredictStatusApplications || ExtremeClipping.Config.PredictMudras || ExtremeClipping.Config.PredictDualcast;
+            set => ExtremeClipping.Config.PredictStatusApplications = ExtremeClipping.Config.PredictMudras = ExtremeClipping.Config.PredictDualcast = value;
         }*/
         public override bool IsEnabled => false;
 
@@ -274,10 +274,10 @@ namespace NoClippy.Modules
         {
             if (actionType != 1 || ret == 0) return;
 
-            if (NoClippy.Config.PredictStatusApplications)
+            if (ExtremeClipping.Config.PredictStatusApplications)
                 PredictStatuses(actionID);
 
-            if (NoClippy.Config.PredictMudras)
+            if (ExtremeClipping.Config.PredictMudras)
                 PredictMudras(actionID);
         }
 
@@ -369,7 +369,7 @@ namespace NoClippy.Modules
 
         private unsafe void CastBegin(ulong objectID, nint packetData)
         {
-            if (!NoClippy.Config.PredictDualcast || DalamudApi.ObjectTable.LocalPlayer?.ClassJob.RowId != 35 || *(byte*)(packetData + 2) != 1) return;
+            if (!ExtremeClipping.Config.PredictDualcast || DalamudApi.ObjectTable.LocalPlayer?.ClassJob.RowId != 35 || *(byte*)(packetData + 2) != 1) return;
 
             var actionID = *(ushort*)packetData;
             if (actionID < 9) return; // Special actions
@@ -426,21 +426,21 @@ namespace NoClippy.Modules
 
             ImGui.Columns(2, "Columns", false);
 
-            if (ImGui.Checkbox("Predict Statuses", ref NoClippy.Config.PredictStatusApplications))
-                NoClippy.Config.Save();
+            if (ImGui.Checkbox("Predict Statuses", ref ExtremeClipping.Config.PredictStatusApplications))
+                ExtremeClipping.Config.Save();
             PluginUI.SetItemTooltip("Removes the effects of lag on certain statuses." +
                 "\nCurrently supported:\nSwiftcast\nTriplecast\nAcceleration\nKassatsu\nEukrasia");
 
             ImGui.NextColumn();
 
-            if (ImGui.Checkbox("Predict Mudras", ref NoClippy.Config.PredictMudras))
-                NoClippy.Config.Save();
+            if (ImGui.Checkbox("Predict Mudras", ref ExtremeClipping.Config.PredictMudras))
+                ExtremeClipping.Config.Save();
             PluginUI.SetItemTooltip("Removes the effects of lag on using Mudras and Ninjutsu.");
 
             ImGui.NextColumn();
 
-            if (ImGui.Checkbox("Predict Dualcast", ref NoClippy.Config.PredictDualcast))
-                NoClippy.Config.Save();
+            if (ImGui.Checkbox("Predict Dualcast", ref ExtremeClipping.Config.PredictDualcast))
+                ExtremeClipping.Config.Save();
             PluginUI.SetItemTooltip("Mostly removes the effects of lag on dualcast." +
                 "\nWarning: Can easily desync with extremely high lag and slidecasting too early.");
 

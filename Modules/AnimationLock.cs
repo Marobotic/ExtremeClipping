@@ -10,9 +10,9 @@ using Dalamud.Bindings.ImGui;
 using Dalamud.Interface.Utility;
 using FFXIVClientStructs.FFXIV.Client.Game.Character;
 using FFXIVClientStructs.FFXIV.Client.Game.Object;
-using static NoClippy.NoClippy;
+using static ExtremeClipping.ExtremeClipping;
 
-namespace NoClippy
+namespace ExtremeClipping
 {
     public partial class Configuration
     {
@@ -26,7 +26,7 @@ namespace NoClippy
     }
 }
 
-namespace NoClippy.Modules
+namespace ExtremeClipping.Modules
 {
     public class AnimationLock : Module
     {

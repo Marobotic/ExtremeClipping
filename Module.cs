@@ -1,4 +1,4 @@
-namespace NoClippy
+namespace ExtremeClipping
 {
     public abstract class Module
     {

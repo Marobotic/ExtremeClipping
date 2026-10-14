@@ -1,21 +1,23 @@
 using System;
+using System.IO;
 using Dalamud.Game.Text;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
+using Newtonsoft.Json;
 
-namespace NoClippy
+namespace ExtremeClipping
 {
-    public class NoClippy : IDalamudPlugin
+    public class ExtremeClipping : IDalamudPlugin
     {
-        public static NoClippy Plugin { get; private set; }
+        public static ExtremeClipping Plugin { get; private set; }
         public static Configuration Config { get; private set; }
 
-        public NoClippy(IDalamudPluginInterface pluginInterface)
+        public ExtremeClipping(IDalamudPluginInterface pluginInterface)
         {
             Plugin = this;
             DalamudApi.Initialize(this, pluginInterface);
 
-            Config = (Configuration)DalamudApi.PluginInterface.GetPluginConfig() ?? new();
+            Config = LoadConfig();
             Config.Initialize();
 
             try
@@ -38,7 +40,7 @@ namespace NoClippy
         [Command("/extremeclipping")]
         [Aliases("/xclip")]
         [HelpMessage("/extremeclipping or /xclip [on|off|toggle|dry|help] - Toggles the config window if no option is specified.")]
-        private void OnNoClippy(string command, string argument)
+        private void OnCommand(string command, string argument)
         {
             switch (argument)
             {
@@ -69,6 +71,33 @@ namespace NoClippy
                         "\non / off / toggle - Enables or disables animation lock compensation." +
                         "\ndry - Toggles dry run (will not override the animation lock).");
                     break;
+            }
+        }
+
+        // 1.0.0.0 saved its settings as NoClippy.Configuration, a type that no longer exists, so
+        // Dalamud can't read them back. Read the file again with the type fixed to this Configuration.
+        private static Configuration LoadConfig()
+        {
+            try
+            {
+                if (DalamudApi.PluginInterface.GetPluginConfig() is Configuration config) return config;
+            }
+            catch (Exception e)
+            {
+                DalamudApi.LogInfo($"Reading the settings saved under the old name instead: {e.Message}");
+            }
+
+            var file = DalamudApi.PluginInterface.ConfigFile;
+            if (!file.Exists) return new();
+
+            try
+            {
+                return JsonConvert.DeserializeObject<Configuration>(File.ReadAllText(file.FullName)) ?? new();
+            }
+            catch (Exception e)
+            {
+                DalamudApi.LogError($"Could not read the saved settings, starting fresh: {e}");
+                return new();
             }
         }
 

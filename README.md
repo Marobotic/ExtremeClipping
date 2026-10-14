@@ -26,7 +26,7 @@ Save, then install Extreme Clipping from the plugin installer.
 ## Build
 
 ```
-dotnet build NoClippy.csproj -c Release
+dotnet build ExtremeClipping.csproj -c Release
 ```
 
 The plugin zip is written to `bin/Release/ExtremeClipping/latest.zip`.

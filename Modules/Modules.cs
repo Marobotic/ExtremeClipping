@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection;
 using Dalamud.Bindings.ImGui;
 
-namespace NoClippy.Modules
+namespace ExtremeClipping.Modules
 {
     public static class Modules
     {

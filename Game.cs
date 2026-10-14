@@ -6,7 +6,7 @@ using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.Game.Character;
 using FFXIVClientStructs.FFXIV.Client.Game.Object;
 
-namespace NoClippy
+namespace ExtremeClipping
 {
     public static unsafe class Game
     {
