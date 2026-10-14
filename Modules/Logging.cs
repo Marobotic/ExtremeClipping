@@ -18,15 +18,17 @@ namespace NoClippy.Modules
     {
         public override int DrawOrder => 8;
 
-        public override void DrawConfig()
+        public override void DrawSettings()
         {
-            if (ImGui.Checkbox("Output to Chat Log", ref NoClippy.Config.LogToChat))
+            Theme.Section("Logging");
+
+            if (ImGui.Checkbox("Output to chat log", ref NoClippy.Config.LogToChat))
                 NoClippy.Config.Save();
             PluginUI.SetItemTooltip("Sends logging to the chat log instead.");
 
             if (!NoClippy.Config.LogToChat) return;
 
-            if (ImGui.BeginCombo("Log Chat Type", NoClippy.Config.LogChatType.ToString()))
+            if (ImGui.BeginCombo("Log chat type", NoClippy.Config.LogChatType.ToString()))
             {
                 foreach (var chatType in Enum.GetValues<XivChatType>())
                 {

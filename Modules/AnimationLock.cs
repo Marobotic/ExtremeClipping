@@ -7,6 +7,7 @@ using Dalamud.Game.ClientState.Conditions;
 using Dalamud.Game.Network;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using Dalamud.Bindings.ImGui;
+using Dalamud.Interface.Utility;
 using FFXIVClientStructs.FFXIV.Client.Game.Character;
 using FFXIVClientStructs.FFXIV.Client.Game.Object;
 using static NoClippy.NoClippy;
@@ -16,6 +17,7 @@ namespace NoClippy
     public partial class Configuration
     {
         public bool EnableAnimLockComp = true;
+        public int SimulatedPingMs = 8;
         public bool EnableLogging = false;
         public bool EnableDryRun = false;
         public Dictionary<uint, float> AnimationLocks = new();
@@ -49,8 +51,15 @@ namespace NoClippy.Modules
         }
 
         public override int DrawOrder => 1;
+        public override bool HasOverview => true;
 
-        private const float simulatedRTT = 0.04f;
+        public const int MinSimulatedPingMs = 0;
+        public const int MaxSimulatedPingMs = 100;
+        public const int DefaultSimulatedPingMs = 8;
+
+        // The ping the module pretends you have, in seconds. Set from the slider in the overview.
+        private static float simulatedRTT => Math.Clamp(Config.SimulatedPingMs, MinSimulatedPingMs, MaxSimulatedPingMs) / 1000f;
+
         private float delay = -1;
         private int packetsSent = 0;
         private bool isCasting = false;
@@ -223,33 +232,55 @@ namespace NoClippy.Modules
 
         public override void DrawConfig()
         {
+            Theme.Section("Animation lock");
+
             if (ImGui.Checkbox("Enable Animation Lock Reduction", ref Config.EnableAnimLockComp))
                 Config.Save();
-            PluginUI.SetItemTooltip("Modifies the way the game handles animation lock," +
-                "\ncausing it to simulate 10 ms ping.");
+            PluginUI.SetItemTooltip("Modifies the way the game handles animation lock,\n" +
+                $"causing it to simulate {Config.SimulatedPingMs} ms ping.");
 
-            if (Config.EnableAnimLockComp)
+            ImGui.Spacing();
+
+            Theme.Caption("Simulated ping");
+
+            // Slider takes the full row; Reset sits on the same line at its right edge.
+            var ping = Config.SimulatedPingMs;
+            var resetWidth = ImGui.CalcTextSize("Reset").X + ImGui.GetStyle().FramePadding.X * 2 + ImGui.GetStyle().ItemSpacing.X;
+            ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X - resetWidth);
+            if (ImGui.SliderInt("##SimulatedPing", ref ping, MinSimulatedPingMs, MaxSimulatedPingMs, "%d ms"))
+                Config.SimulatedPingMs = ping;
+            if (ImGui.IsItemDeactivatedAfterEdit())
+                Config.Save();
+            PluginUI.SetItemTooltip($"How much latency to simulate for animation lock. Default is {DefaultSimulatedPingMs} ms.");
+
+            ImGui.SameLine();
+            if (ImGui.Button("Reset"))
             {
-                ImGui.Columns(2, "AnimlockColumns", false);
-
-                if (ImGui.Checkbox("Enable Logging", ref Config.EnableLogging))
-                    Config.Save();
-
-                ImGui.NextColumn();
-
-                var _ = IsDryRunEnabled;
-                if (ImGui.Checkbox("Dry Run", ref _))
-                {
-                    Config.EnableDryRun = _;
-                    enableAnticheat = false;
-                    Config.Save();
-                }
-                PluginUI.SetItemTooltip("The plugin will still log and perform calculations, but no in-game values will be overwritten.");
+                Config.SimulatedPingMs = DefaultSimulatedPingMs;
+                Config.Save();
             }
+            PluginUI.SetItemTooltip($"Set back to the default of {DefaultSimulatedPingMs} ms.");
 
-            ImGui.Columns(1);
+            ImGui.Spacing();
+            Theme.Caption($"Reduced a total of {TimeSpan.FromSeconds(Config.TotalAnimationLockReduction):d\\:hh\\:mm\\:ss} from {Config.TotalActionsReduced} actions");
+        }
 
-            ImGui.TextUnformatted($"Reduced a total time of {TimeSpan.FromSeconds(Config.TotalAnimationLockReduction):d\\:hh\\:mm\\:ss} from {Config.TotalActionsReduced} actions");
+        public override void DrawSettings()
+        {
+            Theme.Section("Animation lock");
+
+            if (ImGui.Checkbox("Enable logging", ref Config.EnableLogging))
+                Config.Save();
+            PluginUI.SetItemTooltip("Logs every animation lock adjustment.");
+
+            var _ = IsDryRunEnabled;
+            if (ImGui.Checkbox("Dry run", ref _))
+            {
+                Config.EnableDryRun = _;
+                enableAnticheat = false;
+                Config.Save();
+            }
+            PluginUI.SetItemTooltip("The plugin will still log and perform calculations, but no in-game values will be overwritten.");
         }
 
         public override unsafe void Enable()

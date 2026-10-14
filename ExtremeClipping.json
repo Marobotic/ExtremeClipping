@@ -1,0 +1,20 @@
+{
+  "Author": "Mayo Botic, UnknownX",
+  "Name": "Extreme Clipping",
+  "Punchline": "Reduces the effects of lag on weaving and statuses, with a ping you choose.",
+  "Description": "Alpha.\n\nA fork of UnknownX's NoClippy. Reduces the effects of lag on certain aspects of the game, such as weaving and statuses, and can show GCD clips. Pick the ping the animation lock simulates (0 to 100 ms, 8 ms by default) from the Overview tab; logging, dry run and encounter stats live under Settings.\n\n/xclip opens the window. Turn off NoClippy while you use it: both change the same animation lock.",
+  "RepoUrl": "https://github.com/Marobotic/ExtremeClipping",
+  "CategoryTags": [
+    "jobs",
+    "utility"
+  ],
+  "Tags": [
+    "animation-lock",
+    "weaving",
+    "ping",
+    "latency",
+    "gcd",
+    "clipping"
+  ],
+  "Changelog": "First alpha release."
+}

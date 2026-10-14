@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.Numerics;
 using Dalamud.Interface;
@@ -10,19 +10,63 @@ namespace NoClippy
 {
     public static class ConfigUI
     {
+        private const string KofiUrl = "https://ko-fi.com/marobotic";
+
         public static bool isVisible = false;
         public static void ToggleVisible() => isVisible ^= true;
+
+        private enum Tab { Overview, Settings }
+        private static Tab currentTab = Tab.Overview;
 
         public static void Draw()
         {
             if (!isVisible) return;
 
-            //ImGui.SetNextWindowSizeConstraints(new Vector2(400, 200) * ImGuiHelpers.GlobalScale, new Vector2(10000));
-            ImGui.SetNextWindowSize(new Vector2(400, 0) * ImGuiHelpers.GlobalScale);
-            ImGui.Begin("NoClippy Configuration", ref isVisible, ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoCollapse);
+            ImGui.SetNextWindowSize(new Vector2(420, 0) * ImGuiHelpers.GlobalScale);
+            Theme.Push();
+            ImGui.Begin("Extreme Clipping", ref isVisible, ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoCollapse);
             AddDonationHeader(1);
-            Modules.Modules.Draw();
+
+            DrawHeader();
+            ImGui.Spacing();
+            DrawTabs();
+            ImGui.Spacing();
+
+            if (currentTab == Tab.Overview)
+                Modules.Modules.DrawOverview();
+            else
+                Modules.Modules.DrawSettings();
+
             ImGui.End();
+            Theme.Pop();
+        }
+
+        private static void DrawHeader()
+        {
+            ImGui.PushStyleColor(ImGuiCol.Text, new Vector4(0xB1 / 255f, 0x42 / 255f, 0x42 / 255f, 1f));
+            ImGui.TextUnformatted("EXTREME CLIPPING");
+            ImGui.PopStyleColor();
+            ImGui.PushStyleColor(ImGuiCol.Text, new Vector4(0x64 / 255f, 0x64 / 255f, 0x64 / 255f, 1f));
+            ImGui.TextUnformatted("Reduces the effects of lag on weaving and statuses.");
+            ImGui.PopStyleColor();
+        }
+
+        private static void DrawTabs()
+        {
+            if (TabButton("Overview", currentTab == Tab.Overview)) currentTab = Tab.Overview;
+            ImGui.SameLine();
+            if (TabButton("Settings", currentTab == Tab.Settings)) currentTab = Tab.Settings;
+            ImGui.Separator();
+        }
+
+        // A flat segment: the current tab takes the accent underline, the rest stay muted.
+        private static bool TabButton(string label, bool selected)
+        {
+            ImGui.PushStyleColor(ImGuiCol.Button, selected ? new Vector4(0x2D / 255f, 0x2D / 255f, 0x2D / 255f, 1f) : new Vector4(0, 0, 0, 0));
+            ImGui.PushStyleColor(ImGuiCol.Text, selected ? new Vector4(0xF5 / 255f, 0xF5 / 255f, 0xF5 / 255f, 1f) : new Vector4(0x96 / 255f, 0x96 / 255f, 0x96 / 255f, 1f));
+            var pressed = ImGui.Button(label);
+            ImGui.PopStyleColor(2);
+            return pressed;
         }
 
         // TODO: Remove when Hypostasis is added
@@ -80,8 +124,8 @@ namespace NoClippy
 
         private static void AddDonationHeader(int position)
         {
-            if (!AddHeaderIcon("_Donate", FontAwesomeIcon.Heart, new HeaderIconOptions { Position = position, Color = 0xFF3030D0, MouseButton = ImGuiMouseButton.Right, Tooltip = "Right click to open the donation page.", ToastTooltipOnClick = true })) return;
-            StartProcess(@"https://ko-fi.com/unknownx7");
+            if (!AddHeaderIcon("_Donate", FontAwesomeIcon.Heart, new HeaderIconOptions { Position = position, Color = 0xFF3030D0, MouseButton = ImGuiMouseButton.Right, Tooltip = "Right click to support Marobotic on Ko-fi.", ToastTooltipOnClick = true })) return;
+            StartProcess(KofiUrl);
         }
 
         private static bool StartProcess(string process, bool admin = false)

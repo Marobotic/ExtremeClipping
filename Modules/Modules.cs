@@ -77,16 +77,19 @@ namespace NoClippy.Modules
                 info.module.Disable();
         }
 
-        public static void Draw()
+        public static void DrawOverview()
         {
-            var first = true;
             foreach (var info in drawOrder)
             {
-                if (!first)
-                    ImGui.Separator();
+                if (!info.module.HasOverview) continue;
                 info.module.DrawConfig();
-                first = false;
             }
+        }
+
+        public static void DrawSettings()
+        {
+            foreach (var info in drawOrder)
+                info.module.DrawSettings();
         }
     }
 }

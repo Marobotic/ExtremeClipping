@@ -92,24 +92,19 @@ namespace NoClippy.Modules
             }
         }
 
-        public override void DrawConfig()
+        public override void DrawSettings()
         {
-            ImGui.Columns(2, "EncounterColumns", false);
+            Theme.Section("Encounter stats");
 
-            if (ImGui.Checkbox("Enable Encounter Stats", ref NoClippy.Config.EnableEncounterStats))
+            if (ImGui.Checkbox("Enable encounter stats", ref NoClippy.Config.EnableEncounterStats))
                 NoClippy.Config.Save();
             PluginUI.SetItemTooltip("Tracks clips and wasted GCD time while in combat, and logs the total afterwards.");
 
-            ImGui.NextColumn();
+            if (!NoClippy.Config.EnableEncounterStats) return;
 
-            if (NoClippy.Config.EnableEncounterStats)
-            {
-                if (ImGui.Checkbox("Enable Stats Logging", ref NoClippy.Config.EnableEncounterStatsLogging))
-                    NoClippy.Config.Save();
-                PluginUI.SetItemTooltip("Logs individual encounter clips and wasted GCD time.");
-            }
-
-            ImGui.Columns(1);
+            if (ImGui.Checkbox("Enable stats logging", ref NoClippy.Config.EnableEncounterStatsLogging))
+                NoClippy.Config.Save();
+            PluginUI.SetItemTooltip("Logs individual encounter clips and wasted GCD time.");
         }
 
         public override void Enable() => Game.OnUpdate += Update;

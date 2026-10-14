@@ -56,7 +56,7 @@ public class DalamudApi
     public static IToastGui ToastGui { get; private set; }
 
     private static PluginCommandManager<IDalamudPlugin> pluginCommandManager;
-    private const string printName = "NoClippy";
+    private const string printName = "Extreme Clipping";
     private const string printHeader = $"[{printName}] ";
 
     public DalamudApi() { }
